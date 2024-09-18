@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Mine from './components/home/mine';
 
 function App() {
   const [taps, setTaps] = useState(0);
@@ -12,16 +13,13 @@ function App() {
     tg.MainButton.setText('Start Mining').show();
   }, []);
 
-  const handleTap = () => {
-    setTaps(taps + 1);
-  };
+
 
   return (
     <div className="App">
-      <h1>Tap to Mine</h1>
-      <p>Your current taps: {taps}</p>
-      <button onClick={handleTap}>Tap to Mine!</button>
+      <Mine/>
     </div>
+    
   );
 }
 
