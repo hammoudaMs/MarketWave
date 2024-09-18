@@ -42,10 +42,10 @@ const Mine = () => {
     }
   };
 
-  const endMiningGame = () => {
-    setIsMining(false);
-    alert(`Mining session ended! You collected ${rewards} points from ${taps} taps.`);
-  };
+  // const endMiningGame = () => {
+  //   setIsMining(false);
+  //   alert(`Mining session ended! You collected ${rewards} points from ${taps} taps.`);
+  // };
 
   return (
     <div className="hamster-stats-container">
