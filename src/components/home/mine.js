@@ -7,15 +7,14 @@ const Mine = () => {
   const [isMining, setIsMining] = useState(false);
   const [counter, setCounter] = useState(10); // Start with 10 for demo purposes
   const [isRecharging, setIsRecharging] = useState(false);
-  const [maxTaps , setMaxTaps]= useState(10);
-  setMaxTaps(10);
+
     useEffect(() => {
       let rechargeInterval;
-      if (counter < maxTaps || isRecharging ) {
+      if (counter < 10 || isRecharging ) {
         setIsRecharging(true);
         rechargeInterval = setInterval(() => {
           setCounter((prevCounter) => {
-            if (prevCounter < maxTaps && isRecharging ) {
+            if (prevCounter < 10 && isRecharging ) {
               return prevCounter + 1;
             } else {
               setIsRecharging(false); 
@@ -26,7 +25,7 @@ const Mine = () => {
         }, 3500);
       }
       return () => clearInterval(rechargeInterval);
-    }, [counter, isRecharging, maxTaps]);
+    }, [counter, isRecharging]);
 
   const startMiningGame = () => {
     setTaps(0);
@@ -87,7 +86,7 @@ const Mine = () => {
       </div>
 
       <div className="energy-boost">
-        <p>{counter} / {maxTaps}</p>
+        <p>{counter} / {10}</p>
         <button className="boost-button">Boost 🚀</button>
       </div>
 
