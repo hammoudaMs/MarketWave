@@ -26,7 +26,7 @@ const Mine = () => {
         }, 3500);
       }
       return () => clearInterval(rechargeInterval);
-    }, [counter, isRecharging]);
+    }, [counter, isRecharging, maxTaps]);
 
   const startMiningGame = () => {
     setTaps(0);
