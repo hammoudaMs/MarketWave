@@ -8,6 +8,7 @@ const Mine = () => {
   const [counter, setCounter] = useState(10); // Start with 10 for demo purposes
   const [isRecharging, setIsRecharging] = useState(false);
   const [maxTaps , setMaxTaps]= useState(10);
+  setMaxTaps(10);
     useEffect(() => {
       let rechargeInterval;
       if (counter < maxTaps || isRecharging ) {
