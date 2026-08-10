@@ -1,0 +1,22 @@
+{
+  "name": "tunisia-subvention-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot that monitors Tunisian subventions for IT and textile/embroidery projects",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/bootstrap.js",
+    "search": "node src/run-once.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "better-sqlite3": "^11.7.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
