@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   title: "Nex — Find Leads, Build Sites",
   description:
     "Discover local businesses and social pages without websites. Generate landing pages from their assets and draft outreach messages.",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

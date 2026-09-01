@@ -17,15 +17,17 @@ const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
   { id: "chat", label: "Chat", icon: MessageCircle },
 ];
 
+const DEFAULT_LOCATION = { lat: 40.7128, lng: -74.006 };
+
 export default function Dashboard() {
-  const [tab, setTab] = useState<Tab>("maps");
+  const [tab, setTab] = useState<Tab>("social");
   const [sites, setSites] = useState<GeneratedSite[]>([]);
 
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [mapsLoading, setMapsLoading] = useState(false);
   const [mapsSource, setMapsSource] = useState<"google" | "demo" | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState(DEFAULT_LOCATION);
 
   const [selectedSocial, setSelectedSocial] = useState<SocialPage | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -35,15 +37,13 @@ export default function Dashboard() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => setUserLocation({ lat: 40.7128, lng: -74.006 }),
+        () => {},
+        { timeout: 5000 },
       );
-    } else {
-      setUserLocation({ lat: 40.7128, lng: -74.006 });
     }
   }, []);
 
   const searchMaps = useCallback(async () => {
-    if (!userLocation) return;
     setMapsLoading(true);
     try {
       const res = await fetch("/api/places/search", {
@@ -118,44 +118,20 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
-      <header className="border-b border-gray-200 bg-white px-6 py-4">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600">
-              <Zap className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">Nex</h1>
-              <p className="text-xs text-gray-500">Find leads. Build sites. Close deals.</p>
-            </div>
+    <div className="flex min-h-[100dvh] flex-col bg-gray-50">
+      <header className="shrink-0 border-b border-gray-200 bg-white px-4 py-3 safe-top">
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600">
+            <Zap className="h-5 w-5 text-white" />
           </div>
-          <nav className="flex gap-1 rounded-xl bg-gray-100 p-1">
-            {TABS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setTab(id)}
-                className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition ${
-                  tab === id
-                    ? "bg-white text-indigo-600 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{label}</span>
-                {id === "sites" && sites.length > 0 && (
-                  <span className="rounded-full bg-indigo-100 px-1.5 text-xs text-indigo-700">
-                    {sites.length}
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
+          <div>
+            <h1 className="text-lg font-bold text-gray-900">Nex</h1>
+            <p className="text-xs text-gray-500">Find leads. Build sites.</p>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-hidden p-4 sm:p-6">
+      <main className="flex flex-1 flex-col overflow-hidden px-4 py-4 pb-24">
         {tab === "maps" && (
           <BusinessFinder
             businesses={businesses}
@@ -166,6 +142,7 @@ export default function Dashboard() {
             loading={mapsLoading}
             source={mapsSource}
             userLocation={userLocation}
+            generating={generating}
           />
         )}
         {tab === "social" && (
@@ -180,9 +157,7 @@ export default function Dashboard() {
           <div className="flex h-full flex-col gap-4 overflow-y-auto">
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Generated Sites</h2>
-              <p className="text-sm text-gray-500">
-                Landing pages built from map businesses and social page assets
-              </p>
+              <p className="text-sm text-gray-500">Your landing pages</p>
             </div>
             <SiteGallery sites={sites} onDelete={handleDeleteSite} />
           </div>
@@ -194,6 +169,29 @@ export default function Dashboard() {
           />
         )}
       </main>
+
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-gray-200 bg-white safe-bottom">
+        <div className="grid grid-cols-4">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setTab(id)}
+              className={`relative flex flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition active:scale-95 ${
+                tab === id ? "text-indigo-600" : "text-gray-500"
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              <span>{label}</span>
+              {id === "sites" && sites.length > 0 && (
+                <span className="absolute top-1 ml-8 rounded-full bg-indigo-600 px-1.5 text-[10px] text-white">
+                  {sites.length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 }

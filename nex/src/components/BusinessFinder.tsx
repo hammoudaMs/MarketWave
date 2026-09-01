@@ -21,7 +21,8 @@ type Props = {
   onSearch: () => void;
   loading: boolean;
   source: "google" | "demo" | null;
-  userLocation: { lat: number; lng: number } | null;
+  userLocation: { lat: number; lng: number };
+  generating?: boolean;
 };
 
 export default function BusinessFinder({
@@ -33,10 +34,11 @@ export default function BusinessFinder({
   loading,
   source,
   userLocation,
+  generating = false,
 }: Props) {
   return (
     <div className="flex h-full flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-semibold text-gray-900">Discover Nearby</h2>
           <p className="text-sm text-gray-500">
@@ -46,8 +48,8 @@ export default function BusinessFinder({
         <button
           type="button"
           onClick={onSearch}
-          disabled={loading || !userLocation}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-indigo-700 active:scale-[0.98] disabled:opacity-50 sm:w-auto"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
           {loading ? "Searching..." : "Search Near Me"}
@@ -62,19 +64,13 @@ export default function BusinessFinder({
       )}
 
       <div className="grid flex-1 gap-4 lg:grid-cols-2 min-h-0">
-        <div className="h-[400px] lg:h-full overflow-hidden rounded-xl border border-gray-200">
-          {userLocation ? (
-            <BusinessMap
-              center={userLocation}
-              businesses={businesses}
-              selectedId={selected?.id}
-              onSelect={onSelect}
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center bg-gray-50 text-gray-500">
-              Enable location to see the map
-            </div>
-          )}
+        <div className="h-[250px] sm:h-[400px] lg:h-full overflow-hidden rounded-xl border border-gray-200">
+          <BusinessMap
+            center={userLocation}
+            businesses={businesses}
+            selectedId={selected?.id}
+            onSelect={onSelect}
+          />
         </div>
 
         <div className="flex flex-col gap-2 overflow-y-auto">
@@ -129,7 +125,7 @@ export default function BusinessFinder({
       </div>
 
       {selected && (
-        <div className="flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+        <div className="flex flex-col gap-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-medium text-indigo-900">Selected: {selected.name}</p>
             <p className="text-sm text-indigo-700">Ready to generate a simple website</p>
@@ -137,7 +133,8 @@ export default function BusinessFinder({
           <button
             type="button"
             onClick={() => onGenerate(selected)}
-            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+            disabled={generating}
+            className="w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white hover:bg-indigo-700 active:scale-[0.98] disabled:opacity-50 sm:w-auto"
           >
             Generate Site
           </button>

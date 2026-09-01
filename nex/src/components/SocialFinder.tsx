@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Users,
@@ -28,10 +28,12 @@ export default function SocialFinder({ selected, onSelect, onGenerate, generatin
   const [loading, setLoading] = useState(false);
   const [source, setSource] = useState<"meta" | "demo" | null>(null);
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  useEffect(() => {
+    runSearch();
+  }, []);
 
+  async function runSearch() {
+    setLoading(true);
     try {
       const res = await fetch("/api/social/search", {
         method: "POST",
@@ -46,6 +48,11 @@ export default function SocialFinder({ selected, onSelect, onGenerate, generatin
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    await runSearch();
   }
 
   return (
@@ -188,8 +195,8 @@ export default function SocialFinder({ selected, onSelect, onGenerate, generatin
       </div>
 
       {selected && (
-        <div className="flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
             {selected.assets.profileImage && (
               <img
                 src={selected.assets.profileImage}
@@ -208,12 +215,12 @@ export default function SocialFinder({ selected, onSelect, onGenerate, generatin
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <a
               href={selected.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-700 hover:bg-white"
+              className="flex items-center justify-center gap-1 rounded-lg border border-indigo-200 px-3 py-3 text-sm text-indigo-700 hover:bg-white active:scale-[0.98]"
             >
               <ExternalLink className="h-4 w-4" />
               View
@@ -222,7 +229,7 @@ export default function SocialFinder({ selected, onSelect, onGenerate, generatin
               type="button"
               onClick={() => onGenerate(selected)}
               disabled={generating}
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white hover:bg-indigo-700 active:scale-[0.98] disabled:opacity-50"
             >
               {generating ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
