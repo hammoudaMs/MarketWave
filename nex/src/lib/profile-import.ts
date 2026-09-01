@@ -117,29 +117,12 @@ function extractOgFromHtml(html: string): OgData {
   const description = getMeta("og:description") ?? getMeta("description");
   const image = getMeta("og:image") ?? getMeta("twitter:image");
 
-  const images: string[] = [];
-  if (image) images.push(image);
-
-  const jsonLdMatches = html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi);
-  for (const match of jsonLdMatches) {
-    try {
-      const json = JSON.parse(match[1]);
-      const items = Array.isArray(json) ? json : [json];
-      for (const item of items) {
-        if (item?.image) {
-          const imgs = Array.isArray(item.image) ? item.image : [item.image];
-          for (const img of imgs) {
-            const url = typeof img === "string" ? img : img?.url;
-            if (url && !images.includes(url)) images.push(url);
-          }
-        }
-      }
-    } catch {
-      // ignore invalid json-ld
-    }
-  }
-
-  return { title, description, image, images };
+  return {
+    title: title ? decodeHtmlEntities(title) : undefined,
+    description: description ? decodeHtmlEntities(description) : undefined,
+    image,
+    images: image ? [image] : [],
+  };
 }
 
 function buildPageFromScrape(
@@ -184,5 +167,7 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
+    .replace(/&#39;/g, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, num) => String.fromCodePoint(parseInt(num, 10)));
 }
