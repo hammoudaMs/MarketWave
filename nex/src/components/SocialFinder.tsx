@@ -10,17 +10,31 @@ import {
   Sparkles,
 } from "lucide-react";
 import { PlatformIcon } from "@/components/PlatformIcon";
+import ProfilePaste from "@/components/ProfilePaste";
 import { formatFollowers } from "@/lib/social";
 import type { SocialPage, SocialPlatform } from "@/lib/types";
 
 type Props = {
   selected: SocialPage | null;
   onSelect: (page: SocialPage) => void;
-  onGenerate: (page: SocialPage) => void;
+  onGenerate: (page: SocialPage) => Promise<void>;
+  onImportAndGenerate: (data: {
+    slug: string;
+    title: string;
+    social: SocialPage;
+    html: string;
+    createdAt: string;
+  }) => void;
   generating: boolean;
 };
 
-export default function SocialFinder({ selected, onSelect, onGenerate, generating }: Props) {
+export default function SocialFinder({
+  selected,
+  onSelect,
+  onGenerate,
+  onImportAndGenerate,
+  generating,
+}: Props) {
   const [query, setQuery] = useState("");
   const [platform, setPlatform] = useState<SocialPlatform | "all">("all");
   const [minFollowers, setMinFollowers] = useState(5000);
@@ -63,6 +77,13 @@ export default function SocialFinder({ selected, onSelect, onGenerate, generatin
           Find high-follower Facebook &amp; Instagram pages without websites
         </p>
       </div>
+
+      <ProfilePaste
+        onImported={(page) => onSelect(page)}
+        onSiteGenerated={onImportAndGenerate}
+        onGenerate={onGenerate}
+        generating={generating}
+      />
 
       <form onSubmit={handleSearch} className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">

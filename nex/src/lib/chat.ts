@@ -53,6 +53,16 @@ export function getTemplateResponse(message: string, ctx: ChatContext): string {
     return "Select a business or social page first, then I can draft an outreach message for you.";
   }
 
+  if (lower.includes("paste") || lower.includes("link") || lower.includes("profile url")) {
+    return `**Paste a profile link:**
+
+1. Go to the **Social** tab
+2. Paste an Instagram or Facebook profile URL in the box at the top
+3. Tap **Import & Generate** — we pull their photo, bio, and images into a landing page
+
+Example: \`https://instagram.com/username\``;
+  }
+
   if (lower.includes("social") || lower.includes("instagram") || lower.includes("facebook")) {
     return `**Social Discovery:**
 

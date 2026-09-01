@@ -97,20 +97,50 @@ export default function Dashboard() {
       });
       const data = await res.json();
       if (data.slug) {
-        const site: GeneratedSite = {
+        saveGeneratedSite({
           slug: data.slug,
-          type: "social",
           title: data.title,
           social: data.social,
           html: data.html,
           createdAt: data.createdAt,
-        };
-        setSites(addSite(site));
-        setTab("sites");
+          type: "social",
+        });
       }
     } finally {
       setGenerating(false);
     }
+  }
+
+  async function importAndGenerateSocial(data: {
+    slug: string;
+    title: string;
+    social: SocialPage;
+    html: string;
+    createdAt: string;
+  }) {
+    saveGeneratedSite({ ...data, type: "social" });
+  }
+
+  function saveGeneratedSite(data: {
+    slug: string;
+    title: string;
+    social?: SocialPage;
+    business?: Business;
+    html: string;
+    createdAt: string;
+    type?: "social" | "business";
+  }) {
+    const site: GeneratedSite = {
+      slug: data.slug,
+      type: data.type ?? (data.social ? "social" : "business"),
+      title: data.title,
+      social: data.social,
+      business: data.business,
+      html: data.html,
+      createdAt: data.createdAt,
+    };
+    setSites(addSite(site));
+    setTab("sites");
   }
 
   function handleDeleteSite(slug: string) {
@@ -150,6 +180,7 @@ export default function Dashboard() {
             selected={selectedSocial}
             onSelect={setSelectedSocial}
             onGenerate={generateSocialSite}
+            onImportAndGenerate={importAndGenerateSocial}
             generating={generating}
           />
         )}
